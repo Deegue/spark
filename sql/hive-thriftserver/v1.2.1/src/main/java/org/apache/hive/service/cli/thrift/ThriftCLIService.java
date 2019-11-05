@@ -245,7 +245,10 @@ public abstract class ThriftCLIService extends AbstractService implements TCLISe
     try {
       SessionHandle sessionHandle = getSessionHandle(req, resp);
       resp.setSessionHandle(sessionHandle.toTSessionHandle());
+      LOG.error("resp.getConfiguration() before:" + resp.getConfiguration());
+      // 这样设置没用，这块得把Hive版本升上去才能优化
       resp.setConfiguration(req.getConfiguration());
+      LOG.error("resp.getConfiguration() after:" + resp.getConfiguration());
       resp.setStatus(OK_STATUS);
       ThriftCLIServerContext context =
         (ThriftCLIServerContext)currentServerContext.get();
