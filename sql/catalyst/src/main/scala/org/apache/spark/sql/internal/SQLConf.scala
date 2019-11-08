@@ -758,6 +758,12 @@ object SQLConf {
     .intConf
     .createWithDefault(200)
 
+  val THRIFTSERVER_HDFS_DISABLE_CACHE = buildConf("spark.sql.thriftserver.hdfs.disable.cache")
+    .doc("Whether disable FileSystem connection cache of HDFS. When true, it will fix " +
+      "`FileSystem Closed` exception when using CTAS. See [SPARK-21067] for details.")
+    .booleanConf
+    .createWithDefault(false)
+
   // This is used to set the default data source
   val DEFAULT_DATA_SOURCE_NAME = buildConf("spark.sql.sources.default")
     .doc("The default data source to use in input/output.")
