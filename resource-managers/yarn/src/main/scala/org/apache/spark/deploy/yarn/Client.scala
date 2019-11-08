@@ -1071,7 +1071,7 @@ private[spark] class Client(
         if (log.isDebugEnabled) {
           logDebug(formatReportDetails(report))
         } else if (lastState != state) {
-          logInfo(formatReportDetails(report))
+          logWarning(formatReportDetails(report))
         }
       }
 
@@ -1175,7 +1175,7 @@ private[spark] class Client(
       val report = getApplicationReport(appId)
       val state = report.getYarnApplicationState
       logInfo(s"Application report for $appId (state: $state)")
-      logInfo(formatReportDetails(report))
+      logWarning(formatReportDetails(report))
       if (state == YarnApplicationState.FAILED || state == YarnApplicationState.KILLED) {
         throw new SparkException(s"Application $appId finished with status: $state")
       }
