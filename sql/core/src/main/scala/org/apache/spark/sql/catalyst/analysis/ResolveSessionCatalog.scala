@@ -158,17 +158,6 @@ class ResolveSessionCatalog(
     case AlterViewUnsetPropertiesStatement(SessionCatalog(catalog, tableName), keys, ifExists) =>
       AlterTableUnsetPropertiesCommand(tableName.asTableIdentifier, keys, ifExists, isView = true)
 
-    case DeleteFromStatement(
-         nameParts @ SessionCatalog(catalog, tableName), tableAlias, condition) =>
-      loadTable(catalog, tableName.asIdentifier).collect {
-        case v1Table: V1Table =>
-          throw new AnalysisException("DELETE FROM is only supported with v2 tables.")
-      }.getOrElse {
-        val r = UnresolvedV2Relation(nameParts, catalog.asTableCatalog, tableName.asIdentifier)
-        val aliased = tableAlias.map(SubqueryAlias(_, r)).getOrElse(r)
-        DeleteFromTable(aliased, condition)
-      }
-
     case DescribeTableStatement(
          nameParts @ SessionCatalog(catalog, tableName), partitionSpec, isExtended) =>
       loadTable(catalog, tableName.asIdentifier).collect {
@@ -421,6 +410,18 @@ class ResolveSessionCatalog(
         serdeClassName,
         serdeProperties,
         partitionSpec)
+
+    case AlterViewAsStatement(tableName, originalText, query) =>
+      val v1TableName = parseV1Table(tableName, "ALTER VIEW QUERY")
+      AlterViewAsCommand(
+        v1TableName.asTableIdentifier,
+        originalText,
+        query)
+
+    case ShowTablePropertiesStatement(SessionCatalog(_, tableName), propertyKey) =>
+      ShowTablePropertiesCommand(
+        tableName.asTableIdentifier,
+        propertyKey)
   }
 
   private def parseV1Table(tableName: Seq[String], sql: String): Seq[String] = {

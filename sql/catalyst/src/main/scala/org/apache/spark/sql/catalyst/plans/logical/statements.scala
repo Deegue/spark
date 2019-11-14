@@ -238,6 +238,13 @@ case class AlterViewUnsetPropertiesStatement(
     propertyKeys: Seq[String],
     ifExists: Boolean) extends ParsedStatement
 
+/**
+ * ALTER VIEW ... Query command, as parsed from SQL.
+ */
+case class AlterViewAsStatement(
+    viewName: Seq[String],
+    originalText: String,
+    query: LogicalPlan) extends ParsedStatement
 
 /**
  * A DROP TABLE statement, as parsed from SQL.
@@ -269,24 +276,6 @@ case class DescribeColumnStatement(
     tableName: Seq[String],
     colNameParts: Seq[String],
     isExtended: Boolean) extends ParsedStatement
-
-/**
- * A DELETE FROM statement, as parsed from SQL.
- */
-case class DeleteFromStatement(
-    tableName: Seq[String],
-    tableAlias: Option[String],
-    condition: Option[Expression]) extends ParsedStatement
-
-/**
- * A UPDATE tbl_name statement, as parsed from SQL.
- */
-case class UpdateTableStatement(
-    tableName: Seq[String],
-    tableAlias: Option[String],
-    columns: Seq[Seq[String]],
-    values: Seq[Expression],
-    condition: Option[Expression]) extends ParsedStatement
 
 /**
  * An INSERT INTO statement, as parsed from SQL.
@@ -441,3 +430,10 @@ case class ShowColumnsStatement(
  * A SHOW CURRENT NAMESPACE statement, as parsed from SQL
  */
 case class ShowCurrentNamespaceStatement() extends ParsedStatement
+
+/**
+ * A SHOW TBLPROPERTIES statement, as parsed from SQL
+ */
+case class ShowTablePropertiesStatement(
+    tableName: Seq[String],
+    propertyKey: Option[String]) extends ParsedStatement
